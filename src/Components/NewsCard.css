@@ -1,5 +1,5 @@
 .rectangle {
-    width: 34em;
+    width: 32em;
     height: 90px;
     opacity: 0.8;
     border-radius: 6px;
@@ -10,11 +10,15 @@
     margin: 1em;
 }
 
+.rectangle:hover {
+  opacity: 0.4;
+}
+
 .contentInfo {
   display: flex;
   flex-direction: column;
   padding: 1em;
-  width: 30em;
+  width: 28em;
 }
 
 .createdDiv {

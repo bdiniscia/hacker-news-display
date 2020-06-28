@@ -6,10 +6,16 @@ const Home = () => {
     return (
         <div className='homeContainer'>
             <div className='sorter'>
-                <div>
-                    <span>All</span>
-                    <span>My Faves</span>
+                <div class="toggle">
+                    <input type="radio" name="sizeBy" value="weight" id="sizeWeight" checked="checked" />
+                    <label for="sizeWeight">All</label>
+                    <input type="radio" name="sizeBy" value="dimensions" id="sizeDimensions" />
+                    <label for="sizeDimensions">My Faves</label>
                 </div>
+                {/* <div className='buttonSorter'>
+                    <div>All</div>
+                    <div>My Faves</div>
+                </div> */}
             </div>
             <div className='postsContainer'>
                 <NewsCard
