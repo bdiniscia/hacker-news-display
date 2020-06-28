@@ -1,0 +1,12 @@
+.postsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    width: 81%;
+}
+
+.homeContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
