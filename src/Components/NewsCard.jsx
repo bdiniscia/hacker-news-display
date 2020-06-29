@@ -1,7 +1,8 @@
 import React from 'react';
 import './NewsCard.css';
 
-const NewsCard = ({time, author, title, liked, url }) => {
+const NewsCard = ({time, author, title, liked, url, functionLike, id }) => {
+
     return (
         <div className='rectangle'>
             <div className='contentInfo'> 
@@ -14,10 +15,10 @@ const NewsCard = ({time, author, title, liked, url }) => {
                 </a>
             </div>
             <div className='likedDiv'>
-                { liked ?
-                <img alt='liked' src={require('../img/iconmonstr-favorite-3.svg')} />
+                { liked.includes(id) ?
+                <img alt='liked' src={require('../img/iconmonstr-favorite-3.svg')} onClick={functionLike} />
                 :
-                <img alt='not liked' src={require('../img/iconmonstr-favorite-2.svg')} />
+                <img alt='not liked' src={require('../img/iconmonstr-favorite-2.svg')} onClick={functionLike} />
                 }
             </div>
         </div>
