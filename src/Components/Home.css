@@ -23,6 +23,12 @@
     width: 13em;
 }
 
+.titleHome {
+    color: #606060;
+    font-size: 25px;
+    margin-top: 3em;
+}
+
 /* .buttonSorter {
     font-size: 16px;
     font-weight: 500;
@@ -42,7 +48,7 @@
 } */
 
 
-/* TOGGLE STYLING */
+/* -------- TOGGLE STYLING -------- */
 .toggle {
   margin: 0 0 1.5rem;
   box-sizing: border-box;
@@ -121,32 +127,7 @@
   }
 }
 
-/* STYLING FOR THE STATUS HELPER TEXT FOR THE DEMO */
-.status {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 400;
-}
-.status span {
-  font-weight: 600;
-  color: #B6985A;
-}
-.status span:first-of-type {
-  display: inline;
-}
-.status span:last-of-type {
-  display: none;
-}
-@media (max-width: 800px) {
-  .status span:first-of-type {
-    display: none;
-  }
-  .status span:last-of-type {
-    display: inline;
-  }
-}
-
-/* SELECTED MENU */
+/* -------- SELECTED MENU -------- */
 *
 {
     user-select: none;

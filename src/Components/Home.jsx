@@ -1,18 +1,32 @@
 import Loader from 'react-loader-spinner';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Home.css';
 import NewsCard from './NewsCard';
 
 const Home = () => {
 
     const [posts, setPosts] = useState(null);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+
+    React.useEffect(() => {
+        let localParam = localStorage.getItem('param')
+        if (localParam) {
+            getNews(localParam, 0)
+        }
+      }, [])
+
+
 
     const handleClickNews = (e) => {
-        setIsLoading(true)
         const param = e.target.value;
-        fetch(`https://hn.algolia.com/api/v1/search_by_date?query=${param}&page=0`)
+        localStorage.setItem('param', param);
+        getNews(param, 0)
+    }
+
+    const getNews = (param, page) => {
+        setIsLoading(true)
+        fetch(`https://hn.algolia.com/api/v1/search_by_date?query=${param}&page=${page}`)
             .then(data => data.json())
             .then(posts => {
                 let postRender = [];
@@ -28,8 +42,8 @@ const Home = () => {
                         postRender.push(info)
                     }
                 });
-                setPosts(postRender)
-                setIsLoading(false)
+                setPosts(postRender);
+                setIsLoading(false);
             })
     }
 
@@ -39,7 +53,7 @@ const Home = () => {
         <div className='homeContainer'>
             <Loader
                 style={{position: 'absolute', top: '50%', left: '50%'}}
-                type="TailSpin"
+                type="Grid"
                 color="#333"
                 height={100}
                 width={100}
@@ -103,11 +117,12 @@ const Home = () => {
                                 author={post.author}
                                 title={post.story_title}
                                 liked = {post.liked}
-                                url={post.story_url} />
+                                url={post.story_url} 
+                            />
                         )
                     })
                     :
-                    <h3>Select a category of news</h3>
+                    <h3 className='titleHome'>Select a category of news</h3>
                     }
                 </div>
             </div>

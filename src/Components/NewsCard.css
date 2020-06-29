@@ -23,6 +23,7 @@
 
 .linkInfo {
   text-decoration: none;
+  cursor: pointer;
 }
 
 .createdDiv {
