@@ -1,15 +1,17 @@
 import React from 'react';
 import './NewsCard.css';
 
-const NewsCard = ({time, author, title, liked }) => {
+const NewsCard = ({time, author, title, liked, url }) => {
     return (
         <div className='rectangle'>
             <div className='contentInfo'> 
-                <div className='createdDiv'>
-                    <img alt='icon for the posted time' className='iconClock' src={require('../img/iconmonstr-time-2.svg')} />
-                    <span>{time} by {author}</span>
-                </div>
-                <h3 className='titlePost'>{title}</h3>
+                <a href={url} target='_blank' rel="noopener noreferrer" className='linkInfo' >
+                    <div className='createdDiv'>
+                        <img alt='icon for the posted time' className='iconClock' src={require('../img/iconmonstr-time-2.svg')} />
+                        <span>{time} by {author}</span>
+                    </div>
+                    <h3 className='titlePost'>{title}</h3>
+                </a>
             </div>
             <div className='likedDiv'>
                 { liked ?

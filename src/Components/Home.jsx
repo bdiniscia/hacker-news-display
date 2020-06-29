@@ -1,17 +1,57 @@
-import React from 'react';
+import Loader from 'react-loader-spinner';
+
+import React, {useState} from 'react';
 import './Home.css';
 import NewsCard from './NewsCard';
 
 const Home = () => {
+
+    const [posts, setPosts] = useState(null);
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleClickNews = (e) => {
+        setIsLoading(true)
+        const param = e.target.value;
+        fetch(`https://hn.algolia.com/api/v1/search_by_date?query=${param}&page=0`)
+            .then(data => data.json())
+            .then(posts => {
+                let postRender = [];
+                posts.hits.forEach(post => {
+                    if (post.author && post.story_title ) {
+                        const info = {};
+                        info.created_at = post.created_at;
+                        info.author = post.author;
+                        info.story_title = post.story_title;
+                        info.story_url = post.story_url;
+                        info.liked = false;
+                        info.key = post.objectID;
+                        postRender.push(info)
+                    }
+                });
+                setPosts(postRender)
+                setIsLoading(false)
+            })
+    }
+
+
+
     return (
         <div className='homeContainer'>
+            <Loader
+                style={{position: 'absolute', top: '50%', left: '50%'}}
+                type="TailSpin"
+                color="#333"
+                height={100}
+                width={100}
+                visible={isLoading} 
+            />
             <div className='insideHomeContainer'>
                 <div className='sorter'>
-                    <div class="toggle">
-                        <input type="radio" name="sizeBy" value="all" id="allPosts" checked="checked" />
-                        <label for="allPosts">All</label>
+                    <div className="toggle">
+                        <input type="radio" name="sizeBy" value="all" id="allPosts" defaultChecked/>
+                        <label htmlFor="allPosts">All</label>
                         <input type="radio" name="sizeBy" value="faves" id="favesPosts" />
-                        <label for="favesPosts">My Faves</label>
+                        <label htmlFor="favesPosts">My Faves</label>
                     </div>
                     {/* <div className='buttonSorter'>
                         <div>All</div>
@@ -20,55 +60,55 @@ const Home = () => {
                 </div>
                 <div id="select-box">
                     <input type="checkbox" id="options-view-button" />
-                    <div id="select-button" class="brd">
+                    <div id="select-button" className="brd">
                             <div id="selected-value">
                                 <span>Select your news</span>
                             </div>
                             <div id="chevrons">
-                                    <i class="fas fa-chevron-down"></i>
+                                    <i className="fas fa-chevron-down"></i>
                             </div>
                     </div>
                     <div id="options">
-                            <div class="option">
-                                    <input class="s-c top" type="radio" name="platform" value="angular" />
-                                    <input class="s-c bottom" type="radio" name="platform" value="angular"/>
-                                    <i class="fab fa-angular"></i>
-                                    <span class="label">Angular</span>
-                                    <span class="opt-val">Angular</span>
+                            <div className="option">
+                                    <input className="s-c top" type="radio" name="platform" value="angular" onClick={(e) => handleClickNews(e)} />
+                                    <input className="s-c bottom" type="radio" name="platform" value="angular" onClick={(e) => handleClickNews(e)} />
+                                    <i className="fab fa-angular"></i>
+                                    <span className="label">Angular</span>
+                                    <span className="opt-val">Angular</span>
                             </div>
-                            <div class="option">
-                                    <input class="s-c top" type="radio" name="platform" value="react" />
-                                    <input class="s-c bottom" type="radio" name="platform" value="react" />
-                                    <i class="fab fa-react"></i>
-                                    <span class="label">React.js</span>
-                                    <span class="opt-val">React.js</span>
+                            <div className="option">
+                                    <input className="s-c top" type="radio" name="platform" value="reactjs" onClick={(e) => handleClickNews(e)} />
+                                    <input className="s-c bottom" type="radio" name="platform" value="reactjs" onClick={(e) => handleClickNews(e)} />
+                                    <i className="fab fa-react"></i>
+                                    <span className="label">React.js</span>
+                                    <span className="opt-val">React.js</span>
                             </div>
-                            <div class="option">
-                                    <input class="s-c top" type="radio" name="platform" value="vuejs" />
-                                    <input class="s-c bottom" type="radio" name="platform" value="vuejs"/>
-                                    <i class="fab fa-vuejs"></i>
-                                    <span class="label">Vue.js</span>
-                                    <span class="opt-val">Vue.js</span>
+                            <div className="option">
+                                    <input className="s-c top" type="radio" name="platform" value="vuejs" onClick={(e) => handleClickNews(e)}   />
+                                    <input className="s-c bottom" type="radio" name="platform" value="vuejs" onClick={(e) => handleClickNews(e)} />
+                                    <i className="fab fa-vuejs"></i>
+                                    <span className="label">Vue.js</span>
+                                    <span className="opt-val">Vue.js</span>
                             </div>
                             <div id="option-bg"></div>
                     </div>
                 </div>
                 <div className='postsContainer'>
-                    <NewsCard
-                    time='2 hours'
-                    author='author'
-                    title='Event-driven state management in React using Storeon' 
-                    liked = {true} />
-                    <NewsCard
-                    time='3 hours'
-                    author='James John'
-                    title='All the fundamental React.js concepts, jammed into this single Medium article (updated August 2019)' 
-                    liked = {false} />
-                    <NewsCard
-                    time='4 hours'
-                    author='author'
-                    title='Yes, React is taking over front-end development. The question is why.' 
-                    liked = {true} />
+                    { posts ?
+                    posts.map(post => {
+                        return (
+                            <NewsCard
+                                key = {post.key}
+                                time={post.created_at}
+                                author={post.author}
+                                title={post.story_title}
+                                liked = {post.liked}
+                                url={post.story_url} />
+                        )
+                    })
+                    :
+                    <h3>Select a category of news</h3>
+                    }
                 </div>
             </div>
         </div>

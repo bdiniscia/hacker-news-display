@@ -21,6 +21,10 @@
   width: 28em;
 }
 
+.linkInfo {
+  text-decoration: none;
+}
+
 .createdDiv {
   display: flex;
   height: 13px;
