@@ -1,4 +1,5 @@
 import Loader from 'react-loader-spinner';
+import Pagination from '@material-ui/lab/Pagination';
 
 import React, {useEffect, useState} from 'react';
 import './Home.css';
@@ -9,7 +10,6 @@ const Home = () => {
     const [posts, setPosts] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [likedPosts, setLikedPosts] = useState('');
-    const [likedPostsInfo, setlikedPostsInfo] = useState([]);
 
     // If there is a filter saved in the localstorage, get the posts.
     useEffect(() => {
@@ -27,6 +27,7 @@ const Home = () => {
     // Handle the click on the Select menu
     const handleClickNews = (e) => {
         const param = e.target.value;
+
         localStorage.setItem('param', param);
         getNews(param, 0);
     }
@@ -82,6 +83,12 @@ const Home = () => {
         setLikedPosts(existing);
         // Save back to localStorage
         localStorage.setItem('liked', existing.toString());
+    }
+
+    const renderNewPage = (event, page) => {
+        console.log('The page:', page)
+        let localParam = localStorage.getItem('param');
+        getNews(localParam, page)
     }
 
     return (
@@ -161,6 +168,11 @@ const Home = () => {
                     })
                     :
                     <h3 className='titleHome'>Select a category of news</h3>
+                    }
+                </div>
+                <div className='divPagination'>
+                    { localStorage.getItem('param') &&
+                    <Pagination count={50} variant="outlined" shape="rounded" color='primary' onChange={(event, page) => renderNewPage(event,page)} />
                     }
                 </div>
             </div>
