@@ -10,19 +10,34 @@ const Home = () => {
     const [posts, setPosts] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [likedPosts, setLikedPosts] = useState('');
+    const [likedInfo, setLikedInfo] = useState('');
+    const [statusToggle, setStatusToggle] = useState('all');
 
     // If there is a filter saved in the localstorage, get the posts.
     useEffect(() => {
         let localLiked = localStorage.getItem('liked');
-        if (localLiked == null) {
+        if (localLiked !== null) {
+            localLiked = localLiked.split(',');
+        } else {
             localLiked = [];
         }
         setLikedPosts(localLiked);
+
         let localParam = localStorage.getItem('param');
         if (localParam) {
             getNews(localParam, 0);
         }
-      }, [])
+
+        let infoLiked = [];
+        infoLiked = localLiked.map(id => {
+            return getFaves(id);
+        });
+
+        Promise.all(infoLiked).then((posts) => {
+            console.log('>>En la promesa:', posts )
+            setLikedInfo(posts);
+        });      
+      }, []);
 
     // Handle the click on the Select menu
     const handleClickNews = (e) => {
@@ -36,6 +51,7 @@ const Home = () => {
     const getNews = (param, page) => {
         setIsLoading(true);
         const url = `https://hn.algolia.com/api/v1/search_by_date?query=${param}&page=${page}`;
+        console.log(`> query: ${url}`);
         fetch(url)
             .then(data => data.json())
             .then(posts => {
@@ -46,13 +62,12 @@ const Home = () => {
                 posts.hits.forEach(post => {
                     if (post.author && post.story_title && post.story_url ) {
                         const info = {};
-                        info.id = post.objectID;
+                        info.id = `${post.story_id}:${post.objectID}`;
                         info.key = post.objectID;
                         info.created_at = post.created_at;
                         info.author = post.author;
                         info.story_title = post.story_title;
                         info.story_url = post.story_url;
-                        
                         postRender.push(info)
                     }
                 });
@@ -62,6 +77,35 @@ const Home = () => {
             })
     }
 
+    // Function to fetch the posts from the API with parameters
+    const getFaves = (id) => {
+        setIsLoading(true);
+        let [story_id, object_id] = id.split(':');
+        const url = `https://hn.algolia.com/api/v1/items/${story_id}`;
+        return fetch(url)
+            .then(data => data.json())
+            .then(post => {
+                const info = {};
+                info.id = id;
+                info.created_at = post.created_at;
+                info.author = post.author;
+                info.story_title = post.title;
+                info.story_url = post.url;
+
+                let comment = post.children.find((comment) => {
+                    return comment.id === +object_id;
+                });
+
+                if (comment) {
+                    info.created_at = comment.created_at;
+                    info.author = comment.author;
+                    info.key = comment.id;
+                }
+                setIsLoading(false);
+                return info;
+            });
+    }
+
     const handleLike = (id) => {
         // Get the existing data
         let existing = localStorage.getItem('liked');
@@ -69,9 +113,9 @@ const Home = () => {
         // Otherwise, convert the localStorage string to an array
         existing = existing ? existing.split(',') : [];
         console.log('pre foreach', existing);
-        if (existing.includes(id)) {
+        if (existing.includes(`${id}`)) {
             for (let i = 0; i < existing.length; i++) {
-                if (existing[i] == id) {
+                if (existing[i] === `${id}`) {
                     existing.splice(i, 1);
                     setLikedPosts(existing);
                     return localStorage.setItem('liked', existing.toString());
@@ -79,7 +123,7 @@ const Home = () => {
             }
         }
         // Add new data to localStorage Array
-        existing.push(id);
+        existing.push(`${id}`);
         setLikedPosts(existing);
         // Save back to localStorage
         localStorage.setItem('liked', existing.toString());
@@ -89,6 +133,11 @@ const Home = () => {
         console.log('The page:', page)
         let localParam = localStorage.getItem('param');
         getNews(localParam, page)
+    }
+
+    const renderToggle = (e) => {
+        let value = e.target.value;
+        setStatusToggle(value)
     }
 
     return (
@@ -105,9 +154,9 @@ const Home = () => {
             <div className='insideHomeContainer'>
                 <div className='sorter'>
                     <div className='toggle'>
-                        <input type='radio' name='sizeBy' value='all' id='allPosts' defaultChecked/>
+                        <input type='radio' name='sizeBy' value='all' id='allPosts' defaultChecked onClick={e => renderToggle(e)}/>
                         <label htmlFor='allPosts'>All</label>
-                        <input type='radio' name='sizeBy' value='faves' id='favesPosts' />
+                        <input type='radio' name='sizeBy' value='faves' id='favesPosts' onClick={e => renderToggle(e)} />
                         <label htmlFor='favesPosts'>My Faves</label>
                     </div>
                 </div>
@@ -151,7 +200,50 @@ const Home = () => {
                     </div>
                 </div>
                 <div className='postsContainer'>
-                    { posts ?
+                    { statusToggle === 'all' ? 
+                        <div>
+                            { posts ?
+                                posts.map(post => {
+                                    return (
+                                        <NewsCard
+                                            key = {post.key}
+                                            id = {post.id}
+                                            time={post.created_at}
+                                            author={post.author}
+                                            title={post.story_title}
+                                            liked = {likedPosts}
+                                            url={post.story_url} 
+                                            functionLike = {() => handleLike(post.id)}
+                                        />
+                                    )
+                                })
+                                :
+                                <h3 className='titleHome'>Select a category of news</h3>
+                                }
+                        </div>
+                    :
+                    <div>
+                    { likedInfo ?
+                        likedInfo.map(post => {
+                            return (
+                                <NewsCard
+                                    key = {post.key}
+                                    id = {post.id}
+                                    time={post.created_at}
+                                    author={post.author}
+                                    title={post.story_title}
+                                    liked = {likedPosts}
+                                    url={post.story_url} 
+                                    functionLike = {() => handleLike(post.id)}
+                                />
+                            )
+                        })
+                        :
+                        <h3 className='titleHome'>There's no favorites posts saved</h3>
+                        }
+                    </div>
+                    }
+                    {/* { posts ?
                     posts.map(post => {
                         return (
                             <NewsCard
@@ -168,7 +260,7 @@ const Home = () => {
                     })
                     :
                     <h3 className='titleHome'>Select a category of news</h3>
-                    }
+                    } */}
                 </div>
                 <div className='divPagination'>
                     { localStorage.getItem('param') &&

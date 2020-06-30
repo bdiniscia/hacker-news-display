@@ -15,7 +15,7 @@ const NewsCard = ({time, author, title, liked, url, functionLike, id }) => {
                 </a>
             </div>
             <div className='likedDiv'>
-                { liked.includes(id) ?
+                { liked.includes(`${id}`) ?
                 <img alt='liked' src={require('../img/iconmonstr-favorite-3.svg')} onClick={functionLike} />
                 :
                 <img alt='not liked' src={require('../img/iconmonstr-favorite-2.svg')} onClick={functionLike} />
