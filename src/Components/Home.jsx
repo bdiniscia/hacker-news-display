@@ -13,8 +13,8 @@ const Home = () => {
     const [likedInfo, setLikedInfo] = useState('');
     const [statusToggle, setStatusToggle] = useState('all');
 
-    // If there is a filter saved in the localstorage, get the posts.
     useEffect(() => {
+        // Get the liked id from LocalStorage if any
         let localLiked = localStorage.getItem('liked');
         if (localLiked !== null) {
             localLiked = localLiked.split(',');
@@ -23,21 +23,22 @@ const Home = () => {
         }
         setLikedPosts(localLiked);
 
+        // If there is a filter saved in the localstorage, get the posts.
         let localParam = localStorage.getItem('param');
         if (localParam) {
             getNews(localParam, 0);
         }
 
+        // Get and save in a state the info of the faves posts
         let infoLiked = [];
         infoLiked = localLiked.map(id => {
             return getFaves(id);
         });
-
         Promise.all(infoLiked).then((posts) => {
-            console.log('>>En la promesa:', posts )
             setLikedInfo(posts);
         });      
       }, []);
+
 
     // Handle the click on the Select menu
     const handleClickNews = (e) => {
@@ -106,6 +107,7 @@ const Home = () => {
             });
     }
 
+    // Function that handles the clicks on the hearts
     const handleLike = (id) => {
         // Get the existing data
         let existing = localStorage.getItem('liked');
@@ -129,14 +131,31 @@ const Home = () => {
         localStorage.setItem('liked', existing.toString());
     }
 
+    // Function for changes in pagination
     const renderNewPage = (event, page) => {
         console.log('The page:', page)
         let localParam = localStorage.getItem('param');
         getNews(localParam, page)
     }
 
+    // Change the statusToggle to render All or Faves
     const renderToggle = (e) => {
         let value = e.target.value;
+        // Get and save in a state the info of the faves posts
+        let localLiked = localStorage.getItem('liked');
+        if (localLiked !== null) {
+            localLiked = localLiked.split(',');
+        } else {
+            localLiked = [];
+        }
+        setLikedPosts(localLiked);
+        let infoLiked = [];
+        infoLiked = localLiked.map(id => {
+            return getFaves(id);
+        });
+        Promise.all(infoLiked).then((posts) => {
+            setLikedInfo(posts);
+        }); 
         setStatusToggle(value)
     }
 
@@ -199,31 +218,39 @@ const Home = () => {
                             <div id='option-bg'></div>
                     </div>
                 </div>
-                <div className='postsContainer'>
+                <div>
                     { statusToggle === 'all' ? 
                         <div>
                             { posts ?
-                                posts.map(post => {
-                                    return (
-                                        <NewsCard
-                                            key = {post.key}
-                                            id = {post.id}
-                                            time={post.created_at}
-                                            author={post.author}
-                                            title={post.story_title}
-                                            liked = {likedPosts}
-                                            url={post.story_url} 
-                                            functionLike = {() => handleLike(post.id)}
-                                        />
-                                    )
-                                })
+                                <div className='allContainer'>
+                                <div className='postsContainer'>
+                                    {posts.map(post => {
+                                        return (
+                                            <NewsCard
+                                                key = {post.key}
+                                                id = {post.id}
+                                                time={post.created_at}
+                                                author={post.author}
+                                                title={post.story_title}
+                                                liked = {likedPosts}
+                                                url={post.story_url} 
+                                                functionLike = {() => handleLike(post.id)}
+                                            />
+                                        )
+                                    })
+                                    }
+                                    </div>
+                                    <div className='divPagination'>
+                                        <Pagination count={50} variant="outlined" shape="rounded" color='primary' onChange={(event, page) => renderNewPage(event,page)} />
+                                    </div>
+                                </div>
                                 :
                                 <h3 className='titleHome'>Select a category of news</h3>
                                 }
                         </div>
                     :
-                    <div>
-                    { likedInfo ?
+                    <div className='postsContainer'>
+                    { likedInfo !== '' ?
                         likedInfo.map(post => {
                             return (
                                 <NewsCard
@@ -242,29 +269,6 @@ const Home = () => {
                         <h3 className='titleHome'>There's no favorites posts saved</h3>
                         }
                     </div>
-                    }
-                    {/* { posts ?
-                    posts.map(post => {
-                        return (
-                            <NewsCard
-                                key = {post.key}
-                                id = {post.id}
-                                time={post.created_at}
-                                author={post.author}
-                                title={post.story_title}
-                                liked = {likedPosts}
-                                url={post.story_url} 
-                                functionLike = {() => handleLike(post.id)}
-                            />
-                        )
-                    })
-                    :
-                    <h3 className='titleHome'>Select a category of news</h3>
-                    } */}
-                </div>
-                <div className='divPagination'>
-                    { localStorage.getItem('param') &&
-                    <Pagination count={50} variant="outlined" shape="rounded" color='primary' onChange={(event, page) => renderNewPage(event,page)} />
                     }
                 </div>
             </div>
