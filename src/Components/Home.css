@@ -10,7 +10,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 .insideHomeContainer {
@@ -22,6 +21,12 @@
 
 .sorter {
     width: 13em;
+}
+
+.titleHome {
+    color: #606060;
+    font-size: 25px;
+    margin-top: 3em;
 }
 
 /* .buttonSorter {
@@ -43,7 +48,7 @@
 } */
 
 
-/* TOGGLE STYLING */
+/* -------- TOGGLE STYLING -------- */
 .toggle {
   margin: 0 0 1.5rem;
   box-sizing: border-box;
@@ -110,7 +115,7 @@
 }
 @media (max-width: 800px) {
   .toggle input + label {
-    padding: .75rem .25rem;
+    padding: .5rem .25rem;
     -webkit-box-flex: 0;
             flex: 0 0 50%;
     display: -webkit-box;
@@ -122,32 +127,7 @@
   }
 }
 
-/* STYLING FOR THE STATUS HELPER TEXT FOR THE DEMO */
-.status {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 400;
-}
-.status span {
-  font-weight: 600;
-  color: #B6985A;
-}
-.status span:first-of-type {
-  display: inline;
-}
-.status span:last-of-type {
-  display: none;
-}
-@media (max-width: 800px) {
-  .status span:first-of-type {
-    display: none;
-  }
-  .status span:last-of-type {
-    display: inline;
-  }
-}
-
-/* SELECTED MENU */
+/* -------- SELECTED MENU -------- */
 *
 {
     user-select: none;
@@ -192,7 +172,7 @@
     margin: 0;
     opacity: 0;
     cursor: pointer;
-    z-index: 3;
+    z-index: 25;
 }
 
 #selected-value
@@ -516,6 +496,20 @@
   background-color: #143240;
   border-radius: 4px;
   box-shadow: 0 10px 20px -5px rgba(20, 50, 64, 0.76);
+}
+
+.divPagination {
+    margin: 3em 0;
+}
+
+@media screen and (max-width: 550px) {
+    #options {
+        top: 287px;
+    }
+
+    #options-view-button {
+        top: 253px;
+    }
 }
 
 

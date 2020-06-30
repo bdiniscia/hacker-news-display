@@ -21,6 +21,11 @@
   width: 28em;
 }
 
+.linkInfo {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .createdDiv {
   display: flex;
   height: 13px;
@@ -48,4 +53,10 @@
   align-items: center;
   justify-content: center;
   width: 4em;
+}
+
+@media screen and (max-width: 550px) {
+  .rectangle {
+    width: 21em;
+  }
 }
