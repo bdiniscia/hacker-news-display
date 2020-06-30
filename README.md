@@ -20,4 +20,4 @@ Final result:
 
 ## Deploy 🚀
 
-The link of the deploy in [Netfily]()
+The link of the deploy in [Netlify](https://hacker-news-display.netlify.app)
