@@ -54,3 +54,9 @@
   justify-content: center;
   width: 4em;
 }
+
+@media screen and (max-width: 550px) {
+  .rectangle {
+    width: 21em;
+  }
+}

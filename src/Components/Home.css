@@ -115,7 +115,7 @@
 }
 @media (max-width: 800px) {
   .toggle input + label {
-    padding: .75rem .25rem;
+    padding: .5rem .25rem;
     -webkit-box-flex: 0;
             flex: 0 0 50%;
     display: -webkit-box;
@@ -496,6 +496,16 @@
   background-color: #143240;
   border-radius: 4px;
   box-shadow: 0 10px 20px -5px rgba(20, 50, 64, 0.76);
+}
+
+@media screen and (max-width: 550px) {
+    #options {
+        top: 287px;
+    }
+
+    #options-view-button {
+        top: 253px;
+    }
 }
 
 
